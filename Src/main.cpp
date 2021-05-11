@@ -5,7 +5,10 @@
 
 using namespace std;
 
+/*!
+    This is example code uses printIp funtions.
+*/
 
 int main(){
-    
+
 }
