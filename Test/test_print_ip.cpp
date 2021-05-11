@@ -30,6 +30,12 @@ TEST(PrintIp, TestIntegralTypes){
     
 }
 
+TEST(PrintIp, TestString){
+    ostringstream out;
+    print_ip(string("127.0.0.1"), out);
+    ASSERT_EQ("127.0.0.1", out.str());
+}
+
 TEST(PrintIp, TestVector){
     ostringstream out;
     vector<int> ip = {127, 0, 0, 1};

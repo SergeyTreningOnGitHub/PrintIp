@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <tuple>
+#include <string>
 #include <type_traits>
 
 template<class T>
@@ -70,6 +71,8 @@ void print_ip(const T& ip_address, std::ostream& out = std::cout){
             else
                 out << (ip_address & 0xFF);
         }
+    }else if constexpr(std::is_same<T, std::string>::value){
+        out << ip_address;
     }else if constexpr(is_integral_vector<T>::value || is_integral_list<T>::value){        
         for(auto it = ip_address.begin();it != ip_address.end();it++){
             if(it == std::prev(ip_address.end())){
