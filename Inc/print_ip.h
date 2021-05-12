@@ -1,3 +1,6 @@
+/*!
+    \file print_ip.h
+*/
 #pragma once
 
 #include <iostream>
@@ -7,10 +10,21 @@
 #include <string>
 #include <type_traits>
 
+
+/*!
+    Структура для определения того, является ли передаваемый тип кортежем.
+*/
+
 template<class T>
 struct is_one_type_tuple{
     static const bool value = false;
 };
+
+/*!
+    Структура, параметризованная типом кортежа. Используется для определения того, \n
+     вляются ли тип элементов кортежа одинаковым для всех элементов, а также, что этот \n
+     тип - интегральный. 
+*/
 
 template<class T, class... Types>
 struct is_one_type_tuple<std::tuple<T, Types...>>{
@@ -20,11 +34,19 @@ struct is_one_type_tuple<std::tuple<T, Types...>>{
                               is_one_type_tuple<std::tuple<Types...>>::value;
 };
 
+/*!
+    Структура определяет конец рекурсивного инстанцирования
+*/
+
 template<class T>
 struct is_one_type_tuple<std::tuple<T>>{
     using CurrentType = T;
     static const bool value = true;
 };
+
+/*!
+    Обобщенная функция для вывода элементов кортежа в поток вывода.
+*/
 
 template<int INDEX = 0, class... Types>
 void PrintIpTuple(const std::tuple<Types...>& t, std::ostream& out = std::cout){
@@ -36,30 +58,52 @@ void PrintIpTuple(const std::tuple<Types...>& t, std::ostream& out = std::cout){
     }        
 }
 
-template<class T>
-void PrintIpTuple(const std::tuple<T>& t, std::ostream& out = std::cout){
-    out << std::get<0>(t);
-}
+/*!
+    Структура для проверки того, является ли передаваемый тип списком
+*/
 
 template<class T>
 struct is_integral_list{
     static const bool value = false;
 };
 
+/*!
+    Структура для определения того, является ли тип элементов списка интегральным
+*/
+
 template<class T>
 struct is_integral_list<std::list<T>>{
     static const bool value = std::is_integral<T>::value;
 };
+
+/*!
+    Структура для проверки того, является ли передаваемый тип вектором
+*/
 
 template<class T>
 struct is_integral_vector{
     static const bool value = false;
 };
 
+/*!
+    Структура для определения того, является ли тип элементов вектора интегральным
+*/
+
 template<class T>
 struct is_integral_vector<std::vector<T>>{
     static const bool value = std::is_integral<T>::value;
 };
+
+/*!
+    Обобщенная функция печати ip адреса в поток вывода. \n
+    ip адрес может принадлежать к следующим типам: \n
+    любой интегральный тип (char, short, int и т.д.), \n
+    vector<T>, где Т любой интегральный тип, \n
+    list<T>, где T любой интегральный тип, \n
+    string, \n
+    tuple<Types...>, где Types... любые интегральные типы и Types...  - одинаковые типы. \n
+    Если тип ip адреса не относится к вышеперечисленным, то будет вызвана ошибка компиляции. \n
+*/
 
 template<class T>
 void print_ip(const T& ip_address, std::ostream& out = std::cout){

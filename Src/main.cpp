@@ -1,3 +1,6 @@
+/*!
+    \file main.cpp
+*/
 #include "print_ip.h"
 #include <iostream>
 #include <vector>
@@ -7,7 +10,7 @@
 using namespace std;
 
 /*!
-    This is example code uses printIp funtions.
+    Пример исаользования print_ip
 */
 
 int main(){
