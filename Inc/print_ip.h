@@ -95,39 +95,61 @@ struct is_integral_vector<std::vector<T>>{
 };
 
 /*!
-    Обобщенная функция печати ip адреса в поток вывода. \n
-    ip адрес может принадлежать к следующим типам: \n
-    любой интегральный тип (char, short, int и т.д.), \n
-    vector<T>, где Т любой интегральный тип, \n
-    list<T>, где T любой интегральный тип, \n
-    string, \n
-    tuple<Types...>, где Types... любые интегральные типы и Types...  - одинаковые типы. \n
-    Если тип ip адреса не относится к вышеперечисленным, то будет вызвана ошибка компиляции. \n
+    Перегрузка print_ip для интегральных типов 
 */
 
 template<class T>
-void print_ip(const T& ip_address, std::ostream& out = std::cout){
-    if constexpr(std::is_integral<T>::value){
-        
-        for(int i = sizeof(T) - 1;i >= 0;i--){
-            if(i)
-                out << ((ip_address >> (i * 8)) & 0xFF) << ".";
-            else
-                out << (ip_address & 0xFF);
+using Integral = typename std::enable_if<std::is_integral<T>::value>::type;
+    
+template<class T>
+Integral<T> print_ip(const T& ip_address, std::ostream& out = std::cout){            
+    for(int i = sizeof(T) - 1;i >= 0;i--){
+        if(i)
+            out << ((ip_address >> (i * 8)) & 0xFF) << ".";
+        else
+            out << (ip_address & 0xFF);
+    }    
+}
+
+/*!
+    Перегрузка print_ip для строк
+*/
+
+template<class T>
+using String = typename std::enable_if<std::is_same<T, std::string>::value>::type;
+
+template<class T>
+String<T> print_ip(const T& ip_address, std::ostream& out = std::cout){    
+    out << ip_address;    
+}
+
+/*!
+    Перегрузка print_ip для контейнеров vector и list, параметризованных интегральными типами
+*/
+
+template<class T>
+using SeqCont = typename std::enable_if<is_integral_vector<T>::value || 
+                                            is_integral_list<T>::value>::type;
+
+template<class T>
+SeqCont<T> print_ip(const T& ip_address, std::ostream& out = std::cout){    
+    for(auto it = ip_address.begin();it != ip_address.end();it++){
+        if(it == std::prev(ip_address.end())){
+            out << (*it);
+        }else{
+            out << (*it) << ".";
         }
-    }else if constexpr(std::is_same<T, std::string>::value){
-        out << ip_address;
-    }else if constexpr(is_integral_vector<T>::value || is_integral_list<T>::value){        
-        for(auto it = ip_address.begin();it != ip_address.end();it++){
-            if(it == std::prev(ip_address.end())){
-                out << (*it);
-            }else{
-                out << (*it) << ".";
-            }
-        }        
-    }else if constexpr(is_one_type_tuple<T>::value){
-        PrintIpTuple(ip_address, out);
-    }else{        
-        static_assert(std::is_integral<T>::value, "Ivalid types");
-    }
+    }           
+}
+
+/*!
+    Перегрузка print_ip для tuple, параметризованного интегральным одинаковым типом
+*/
+
+template<class T>
+using Tuple = typename std::enable_if<is_one_type_tuple<T>::value>::type;
+    
+template<class T>
+Tuple<T> print_ip(const T& ip_address, std::ostream& out = std::cout){    
+    PrintIpTuple(ip_address, out);    
 }
